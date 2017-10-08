@@ -1,0 +1,23 @@
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Categories</title>
+    </h:head>
+    <h:body style="margin-left:10%; margin-right:10%">
+    <div >
+       <h1>Categories</h1>
+    	<p:dataTable value="#{categorieView.categories}" var="categorie">
+		    <p:column headerText="Id" width="20%">
+		        <h:outputText value="#{categorie.id}" />
+		    </p:column>		 
+		    <p:column headerText="Libelle">
+		        <h:outputText value="#{categorie.libelle}" />
+		    </p:column>
+		
+		</p:dataTable>
+		</div>	
+    </h:body>
+ </html>
