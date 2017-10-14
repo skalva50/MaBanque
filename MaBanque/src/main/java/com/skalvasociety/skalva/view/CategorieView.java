@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.annotation.PostConstruct;
+
+import org.primefaces.event.RowEditEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,18 @@ public class CategorieView implements Serializable {
     
 	private List<Categorie> categories;
 	
+	private Categorie categorie = new Categorie();
+	
+	private Categorie selectedCategorie;
+	
+	public Categorie getCategorie() {
+		return categorie;
+	}
+
+	public void setCategorie(Categorie categorie) {
+		this.categorie = categorie;
+	}
+
 	@PostConstruct
     public void init() {		
     	categories = service.getAll();
@@ -38,5 +52,39 @@ public class CategorieView implements Serializable {
 	public void setCategories(List<Categorie> categories) {
 		this.categories = categories;
 	}
+	
+	public void save(){
+		service.save(categorie);
+		categorie = new Categorie();
+		categories = service.getAll();		
+	}
+	
+	public void delete(){
+		if(selectedCategorie != null){
+			service.delete(selectedCategorie);
+			categories = service.getAll();
+		}
+		
+	}
+
+	public Categorie getSelectedCategorie() {
+		return selectedCategorie;
+	}
+
+	public void setSelectedCategorie(Categorie selectedCategorie) {
+		this.selectedCategorie = selectedCategorie;
+	}
+	
+    public void onRowEdit(RowEditEvent event) {    	   	
+    	String libelle = ((Categorie) event.getObject()).getLibelle();    	
+    	Categorie categorie = service.getByKey(((Categorie) event.getObject()).getId());    	
+    	categorie.setLibelle(libelle);   	
+    }
+    
+    public void onRowCancel(RowEditEvent event) {    	    	
+    	Categorie categorie = service.getByKey(((Categorie) event.getObject()).getId());  
+    	service.delete(categorie);
+    	categories = service.getAll();
+    }
 
 }

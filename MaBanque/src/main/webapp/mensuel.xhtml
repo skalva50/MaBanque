@@ -1,0 +1,65 @@
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <h:body style="margin-left:10%; margin-right:10%">
+    <ui:composition template="template/template.xhtml">
+    <ui:define name="title">Details mensuels</ui:define>
+    <ui:define name="content">
+    <div>   
+
+	    <h:form id="form">
+	    	<h:panelGrid columns="3" cellpadding="5">
+		    	<p:outputLabel for="event" value="Selectionner un mois:" style="font-size: 30px;"  />
+		        <p:calendar id="event" value="#{mensuelView.dateSelected}"  navigator="true">
+		            <p:ajax event="dateSelect" listener="#{mensuelView.onDateSelect}" process="@form" update="@form" />
+		        </p:calendar>
+	        </h:panelGrid>        
+	
+	    	<p:dataTable value="#{mensuelView.operations}"
+	    				 var="operation"	    				 
+	    				 sortBy="#{operation.dateOperation}"
+	    				 sortOrder="descending"
+						 editable="true"						 
+						  >
+	    		<f:facet name="header">
+	           		Operations
+	       		</f:facet>	       		      		
+	       		
+			    <p:column headerText="Date" style="width:10%" sortBy="#{operation.dateOperation}">
+			        <h:outputText value="#{operation.dateOperation}"> <f:convertDateTime pattern="dd-MMM-yyyy" /></h:outputText>
+			    </p:column>		 
+			    <p:column headerText="Libelle" style="width:40%" sortBy="#{operation.libelle}">
+			    	<h:outputText value="#{operation.libelle}"/>			       
+			    </p:column>
+			   	<p:column headerText="Montant" style="width:10%" sortBy="#{operation.montant}">
+			        <h:outputText value="#{operation.montant}" />
+			    </p:column>
+			    <p:column headerText="Type" style="width:10%" sortBy="#{operation.sens}">
+			        <h:outputText value="Recettes" rendered = "#{operation.sens}"/>
+			        <h:outputText value="Depenses" rendered = "#{not operation.sens}"/>
+			    </p:column>    
+				<p:column headerText="Categorie" style="width:15%" sortBy="#{operation.categorie.libelle}">
+		        	<p:cellEditor>
+		            	<f:facet name="output"><h:outputText value="#{operation.categorie.libelle}" /></f:facet>
+		               	<f:facet name="input">
+		                	<h:selectOneMenu value="#{operation.categorie.libelle}" style="width:100%">
+		                    	<f:selectItems value="#{mensuelView.categories}" var="categorie" itemLabel="#{categorie.libelle}" itemValue="#{categorie.id}" />		                    	
+		                 	</h:selectOneMenu>
+		               	</f:facet>
+		           	</p:cellEditor>
+		       </p:column>			
+		       <p:column style="width:5%" >
+		        	<p:rowEditor/>
+		       </p:column>
+			    	<p:ajax event="rowEdit" listener="#{mensuelView.onRowEdit}"/>
+			</p:dataTable>        
+	    </h:form>    
+    </div>
+    </ui:define>
+    </ui:composition>
+    </h:body>
+</html>

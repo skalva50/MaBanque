@@ -11,13 +11,28 @@ import com.skalvasociety.skalva.dao.ICategorieDao;
 
 @Service("categorieService")
 @Transactional
-public class CategorieService implements ICategorieService {
-
-	@Autowired
+public class CategorieService  implements ICategorieService {
+	@Autowired 
 	private ICategorieDao dao;
-		
+	
 	public List<Categorie> getAll() {		
 		return dao.getAll();
 	}
+
+	public void save(Categorie categorie) {
+		dao.save(categorie);
+		
+	}
+
+	public void delete(Categorie categorie) {
+		dao.delete(categorie);
+		
+	}
+
+	public Categorie getByKey(int key) {
+		return dao.getByKey(key);
+		
+	}
+	
 
 }

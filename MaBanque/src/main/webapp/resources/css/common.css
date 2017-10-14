@@ -1,0 +1,30 @@
+
+body{
+	margin : 0px;	
+}
+
+html {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.navBar{
+	background-color : #108a93 ;
+	margin-bottom : 10px;
+}
+
+@font-face {
+ font-family: MotionFont;
+ src: url("#{resource['css/fonts/MotionPicture.ttf']}"); /* TTF file for CSS3 browsers */
+}
+
+
+.titreSite{
+	font-family: 'MotionFont';
+	font-weight: normal;
+	font-size: 82px;	
+}
