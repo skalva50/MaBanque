@@ -14,29 +14,28 @@
 	 <div >
 		<h1 style="text-align: center">Categories</h1>
 		<h:form>
-			<h:panelGrid columns="3" cellpadding="5">
+			<h:panelGrid columns="3" cellpadding="10">
 				<p:outputLabel value="Ajouter catégorie"></p:outputLabel>
 				<p:inputText value="#{categorieView.categorie.libelle}"></p:inputText>
-				<p:commandButton value="Ajouter" action="#{categorieView.save}" process="@form" update="@form" class="btn-success"></p:commandButton>
+				<p:commandButton value="Ajouter" action="#{categorieView.save}" process="@all" update="@all" class="btn-success"></p:commandButton>
 			</h:panelGrid>  
 	 
 	   		<p:dataTable id="categorie1" var="categorie" value="#{categorieView.categories}" editable="true" style="margin-bottom:20px">
 		       	<f:facet name="header">Categories</f:facet>
 		 
 		       	<p:ajax event="rowEdit" listener="#{categorieView.onRowEdit}" />
-		       	<p:ajax event="rowEditCancel" listener="#{categorieView.onRowCancel}"/>
-		 
-		       	<p:column headerText="Id" style="width:10%">           
-		               <h:outputText value="#{categorie.id}" />         
-		       	</p:column>
-		 
-		       	<p:column headerText="Libelle" style="width:50%">
+		       	<p:ajax event="rowEditCancel" listener="#{categorieView.onRowCancel}"/>	 
+		       	<p:column headerText="Libelle" style="width:80%">
 		        	<p:cellEditor>
 		            	<f:facet name="output"><h:outputText value="#{categorie.libelle}" /></f:facet>
 		               	<f:facet name="input"><p:inputText value="#{categorie.libelle}" style="width:100%" label="Libelle"/></f:facet>
 		           	</p:cellEditor>
-		       	</p:column> 
-		        
+		       	</p:column>
+		       	<p:column headerText="Hors stats" style="width:15%">		               	
+	           		<p:selectBooleanCheckbox value="#{categorie.horsStats}">
+	           		 	<p:ajax update="categorie1" listener="#{categorieView.saveCheckedState}" />
+	           		</p:selectBooleanCheckbox>		               	
+		       	</p:column>		        
 		       	<p:column style="width:10%; height:50px" >
 		        	<p:rowEditor/>
 		       	</p:column>

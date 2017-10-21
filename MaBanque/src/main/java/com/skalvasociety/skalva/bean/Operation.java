@@ -23,6 +23,7 @@ public class Operation {
 	private boolean sens;
 	private Categorie categorie;
 	private String numcompte;
+	private String reference;
 	
 	 @Transient
     private String mois;
@@ -30,7 +31,7 @@ public class Operation {
 	 @Transient
     public String getMois() {        
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getDateOperation());
+        calendar.setTime(getDateOperation());        
         int month = calendar.get(Calendar.MONTH)+1;
         int year = calendar.get(Calendar.YEAR);
         return year+"-"+month+"-01";      
@@ -89,5 +90,13 @@ public class Operation {
 
 	public void setNumcompte(String numcompte) {
 		this.numcompte = numcompte;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 }

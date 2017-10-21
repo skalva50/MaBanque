@@ -1,31 +1,31 @@
 package com.skalvasociety.skalva.converter;
 
 import javax.faces.application.FacesMessage;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 
 import com.skalvasociety.skalva.bean.Categorie;
 import com.skalvasociety.skalva.service.ICategorieService;
 
-@Service
+@Service("categorieConverter")
 public class CategorieConverter implements Converter {
+	// Overrider la methode equals de l'objet à convertir
 	
 	@Autowired
 	private ICategorieService categorieService; 
 
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
+		System.out.println("Conveter : getAsObject");
 		if(value != null && value.trim().length() > 0) {
 			try{				
-				if(categorieService == null){						
+				if(categorieService == null){
 					return null;
-				}else{					
+				}else{
 					return categorieService.getByKey(Integer.parseInt(value));
 				}				
             } catch(NumberFormatException e) {

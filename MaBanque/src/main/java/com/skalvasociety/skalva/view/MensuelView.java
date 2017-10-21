@@ -2,15 +2,18 @@ package com.skalvasociety.skalva.view;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionEvent;
 
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
-
+import org.primefaces.model.chart.PieChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,12 +41,19 @@ public class MensuelView implements Serializable {
 	
 	// Selection des combobox
 	private Date dateSelected = new Date();
-	private int categorieSelect;
+	private int categorieSelect;	
+	
+	// Pie
+	private PieChartModel pieModel;
+	
+	// Champ
+	private Double total;
 		
 	@PostConstruct
     public void init() {
 		categories = categorieService.getAll();
 		filterOperationByDate();
+		createPieModel();
     }	
 	
 	private void filterOperationByDate() {
@@ -51,9 +61,13 @@ public class MensuelView implements Serializable {
         setOperations(listeOperationFiltered);      
 	}
 	
+    public void reload(ActionEvent actionEvent) {
+        init();
+    }
+	
 	public void onDateSelect(SelectEvent event) {
 		dateSelected = (Date) event.getObject();
-        filterOperationByDate();                
+        init();                
 	}
 	
     public void onRowEdit(RowEditEvent event) {
@@ -75,6 +89,20 @@ public class MensuelView implements Serializable {
     	// Mise à jour de l'operation de la BDD    	
     	operationBDD.setCategorie(categorie);    	
     }  
+    
+    private void createPieModel() {
+    	pieModel = new PieChartModel();
+    	HashMap<String,Double> categorieMontant = service.getMonthCategorie(dateSelected);
+    	setTotal(0d);
+    	for (Entry<String, Double> categorie : categorieMontant.entrySet()) {
+    		pieModel.set(categorie.getKey(), categorie.getValue());			
+    		setTotal(getTotal()+categorie.getValue());
+		}  
+    	setTotal(Math.round( getTotal() * 100.0 ) / 100.0);
+    	
+    	pieModel.setTitle("Repartition dépenses");
+    	pieModel.setLegendPosition("e");
+    }
 
 	public List<Operation> getOperations() {
 		return operations;
@@ -106,6 +134,18 @@ public class MensuelView implements Serializable {
 
 	public void setCategorieSelect(int categorieSelect) {
 		this.categorieSelect = categorieSelect;
+	}
+
+	public PieChartModel getPieModel() {
+		return pieModel;
+	}
+
+	public Double getTotal() {
+		return total;
+	}
+
+	public void setTotal(Double total) {
+		this.total = total;
 	}
 }
  

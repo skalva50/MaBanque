@@ -19,6 +19,29 @@ public class OperationDao extends AbstractDao<Integer,Operation> implements IOpe
 		criteria.add(Restrictions.eq("numcompte","81932331196"));
 		return (List<Operation>) criteria.list();
 	}
+	
+	
+
+	@Override
+	public void save(Operation operation) {
+		if(isUnique(operation)){
+			super.save(operation);
+		}		
+	}
+
+	public boolean isUnique(Operation operation) {
+		Criteria criteria = createEntityCriteria();
+		criteria.add(Restrictions.eq("dateOperation",operation.getDateOperation()));
+		criteria.add(Restrictions.eq("libelle",operation.getLibelle()));
+		criteria.add(Restrictions.eq("reference",operation.getReference()));
+		criteria.add(Restrictions.eq("montant",operation.getMontant()));
+		criteria.add(Restrictions.eq("numcompte",operation.getNumcompte()));
+		if( criteria.list() != null && !criteria.list().isEmpty()){
+			return false;
+		}else{
+			return true;
+		}
+	}
 
 
 }

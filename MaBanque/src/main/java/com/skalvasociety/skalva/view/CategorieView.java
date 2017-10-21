@@ -77,8 +77,10 @@ public class CategorieView implements Serializable {
 	
     public void onRowEdit(RowEditEvent event) {    	   	
     	String libelle = ((Categorie) event.getObject()).getLibelle();    	
+    	Boolean horsStats = ((Categorie) event.getObject()).getHorsStats(); 
     	Categorie categorie = service.getByKey(((Categorie) event.getObject()).getId());    	
-    	categorie.setLibelle(libelle);   	
+    	categorie.setLibelle(libelle);
+    	categorie.setHorsStats(horsStats);
     }
     
     public void onRowCancel(RowEditEvent event) {    	    	

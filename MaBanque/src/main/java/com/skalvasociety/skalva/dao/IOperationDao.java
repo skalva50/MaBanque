@@ -9,5 +9,6 @@ import com.skalvasociety.skalva.bean.Operation;
 public interface IOperationDao extends IDao<Serializable,Operation> {
 
 	public List<Operation> getAllCourant();
+	public boolean isUnique(Operation operation);
 
 }

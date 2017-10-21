@@ -11,19 +11,30 @@
     <ui:define name="content">
     <div>   
 
-	    <h:form id="form">
-	    	<h:panelGrid columns="3" cellpadding="5">
+	    <h:form id="form">	    	
+	    	<h:panelGrid columns="3">
 		    	<p:outputLabel for="event" value="Selectionner un mois:" style="font-size: 30px;"  />
 		        <p:calendar id="event" value="#{mensuelView.dateSelected}"  navigator="true">
 		            <p:ajax event="dateSelect" listener="#{mensuelView.onDateSelect}" process="@form" update="@form" />
 		        </p:calendar>
-	        </h:panelGrid>        
-	
+		        <p:commandButton value="Rafraichir" id="reload" update="tableMensuel pieModel total" actionListener="#{mensuelView.reload}" styleClass="ui-priority-primary" />
+			</h:panelGrid>  
+			
+			<p:outputLabel id="total" value="Total: #{mensuelView.total} €" style="font-size: 30px;"  />
+	        <div class="ui-g">
+    			<div class="ui-g-6">
+    				<p:chart id="pieModel" type="pie" model="#{mensuelView.pieModel}" style="width:90%;height:500px" />
+    			</div>
+    			<div class="ui-g-6">
+    				<p:chart id="pieModel1" type="pie" model="#{mensuelView.pieModel}" style="width:90%;height:500px" />
+    			</div>
+			</div>        
 	    	<p:dataTable value="#{mensuelView.operations}"
 	    				 var="operation"	    				 
 	    				 sortBy="#{operation.dateOperation}"
 	    				 sortOrder="descending"
-						 editable="true"						 
+						 editable="true"
+						 id="tableMensuel"						 
 						  >
 	    		<f:facet name="header">
 	           		Operations
@@ -46,7 +57,7 @@
 		        	<p:cellEditor>
 		            	<f:facet name="output"><h:outputText value="#{operation.categorie.libelle}" /></f:facet>
 		               	<f:facet name="input">
-		                	<h:selectOneMenu value="#{operation.categorie.libelle}" style="width:100%">
+		                	<h:selectOneMenu value="#{mensuelView.categorieSelect}" style="width:100%">
 		                    	<f:selectItems value="#{mensuelView.categories}" var="categorie" itemLabel="#{categorie.libelle}" itemValue="#{categorie.id}" />		                    	
 		                 	</h:selectOneMenu>
 		               	</f:facet>

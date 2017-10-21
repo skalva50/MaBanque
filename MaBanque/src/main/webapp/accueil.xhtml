@@ -9,8 +9,26 @@
     <ui:composition template="template/template.xhtml">
     <ui:define name="title">Accueil</ui:define>
     <ui:define name="content">
-    <div>    
-    	<p:chart type="bar" model="#{accueilView.barTotalModel}" style="height:600px"/>
+    <div>   
+    	<h1>Evolution mensuel</h1>
+    	<p:commandButton value="Rafraichir" id="reload" update="grapheTotalLine grapheCategorie" actionListener="#{accueilView.reload}" styleClass="ui-priority-primary" />    	
+    	<p:chart id="grapheTotalLine" type="line" model="#{accueilView.lineTotalModel}" style="height:800px;">
+    		<p:ajax event="itemSelect" listener="#{accueilView.itemSelect}"/>
+    	</p:chart>
+    	<hr/>
+    	<h1>Evolution mensuel par catégorie</h1>
+ 		<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">    	
+        	<p:outputLabel value="Categorie:" />
+			<h:form>
+        		<p:selectOneMenu id="categorieSelect" value="#{accueilView.categorieSelect}" converter="#{categorieConverter}">  
+        			<f:selectItem itemLabel="#{accueilView.categorieSelect.libelle}" itemValue="#{accueilView.categorieSelect}"  />       				                      
+            		<f:selectItems value="#{accueilView.categories}" var="categorie" itemLabel="#{categorie.libelle}" itemValue="#{categorie}"/>
+            		<p:ajax listener="#{accueilView.onCategorieChange}" process="@form" update="grapheCategorie"/>             
+        		</p:selectOneMenu>
+			</h:form>          
+		</h:panelGrid>
+    	<p:chart id="grapheCategorie" type="line" model="#{accueilView.lineCategorieModel}" style="height:600px;"/>
+
     </div>
     </ui:define>
     </ui:composition>
