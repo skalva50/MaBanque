@@ -2,9 +2,12 @@ package com.skalvasociety.skalva.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,6 +16,7 @@ public class Categorie {
 	private int id;
 	private String libelle;
 	private Boolean horsStats;
+	private TypeCategorie typeCategorie;
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)	
@@ -46,6 +50,15 @@ public class Categorie {
 	}
 	public void setHorsStats(Boolean horsStats) {
 		this.horsStats = horsStats;
+	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_typecategorie", nullable = true)
+	public TypeCategorie getTypeCategorie() {
+		return typeCategorie;
+	}
+	public void setTypeCategorie(TypeCategorie typeCategorie) {
+		this.typeCategorie = typeCategorie;
 	}
 	
 	

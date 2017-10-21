@@ -13,8 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.skalvasociety.skalva.bean.Categorie;
-
+import com.skalvasociety.skalva.bean.TypeCategorie;
 import com.skalvasociety.skalva.service.ICategorieService;
+import com.skalvasociety.skalva.service.ITypeCategorieService;
 
 @SuppressWarnings("serial")
 @ManagedBean
@@ -24,13 +25,17 @@ import com.skalvasociety.skalva.service.ICategorieService;
 public class CategorieView implements Serializable {
 	
 	@Autowired
-    private ICategorieService service;
+    private ICategorieService service;	
+	@Autowired
+	private ITypeCategorieService typeCategorieService;
     
-	private List<Categorie> categories;
-	
-	private Categorie categorie = new Categorie();
-	
+	private List<Categorie> categories;	
+	private Categorie categorie = new Categorie();	
 	private Categorie selectedCategorie;
+	
+	private List<TypeCategorie> typeCategories;
+	private int typeCategorieSelected;
+	
 	
 	public Categorie getCategorie() {
 		return categorie;
@@ -43,6 +48,7 @@ public class CategorieView implements Serializable {
 	@PostConstruct
     public void init() {		
     	categories = service.getAll();
+    	setTypeCategories(typeCategorieService.getAll());
     }
 
 	public List<Categorie> getCategories() {
@@ -56,15 +62,14 @@ public class CategorieView implements Serializable {
 	public void save(){
 		service.save(categorie);
 		categorie = new Categorie();
-		categories = service.getAll();		
+		init();		
 	}
 	
 	public void delete(){
 		if(selectedCategorie != null){
-			service.delete(selectedCategorie);
-			categories = service.getAll();
+			service.delete(selectedCategorie);			
 		}
-		
+		init();		
 	}
 
 	public Categorie getSelectedCategorie() {
@@ -75,12 +80,32 @@ public class CategorieView implements Serializable {
 		this.selectedCategorie = selectedCategorie;
 	}
 	
-    public void onRowEdit(RowEditEvent event) {    	   	
+    public void onRowEdit(RowEditEvent event) {     	
     	String libelle = ((Categorie) event.getObject()).getLibelle();    	
     	Boolean horsStats = ((Categorie) event.getObject()).getHorsStats(); 
-    	Categorie categorie = service.getByKey(((Categorie) event.getObject()).getId());    	
-    	categorie.setLibelle(libelle);
-    	categorie.setHorsStats(horsStats);
+  	
+    	// Recherche de l'operation selectionné dans la vue
+    	Categorie categorieView = null;
+    	for (Categorie categorie : categories) {
+			if(categorie.getId() == ((Categorie)event.getObject()).getId()){
+				categorieView =  categorie;
+			}
+		}
+    	// Recherche de la mêmeoperation selectionné dans la BDD
+    	Categorie categorieBDD = service.getByKey(((Categorie)event.getObject()).getId());
+    	
+    	// Recherche de la categorie selectionnée dans la vue
+    	TypeCategorie typecategorie = typeCategorieService.getByKey(typeCategorieSelected);
+    	
+    	// Mise à jour de l'operation de la vue
+    	categorieView.setTypeCategorie(typecategorie);
+    	categorieView.setLibelle(libelle);
+    	categorieView.setHorsStats(horsStats);
+    	// Mise à jour de l'operation de la BDD    	
+    	categorieBDD.setTypeCategorie(typecategorie);    
+    	categorieBDD.setLibelle(libelle);
+    	categorieBDD.setHorsStats(horsStats);
+    	
     }
     
     public void onRowCancel(RowEditEvent event) {    	    	
@@ -88,5 +113,21 @@ public class CategorieView implements Serializable {
     	service.delete(categorie);
     	categories = service.getAll();
     }
+
+	public List<TypeCategorie> getTypeCategories() {
+		return typeCategories;
+	}
+
+	public void setTypeCategories(List<TypeCategorie> typeCategories) {
+		this.typeCategories = typeCategories;
+	}
+
+	public int getTypeCategorieSelected() {
+		return typeCategorieSelected;
+	}
+
+	public void setTypeCategorieSelected(int typeCategorieSelected) {
+		this.typeCategorieSelected = typeCategorieSelected;
+	}
 
 }

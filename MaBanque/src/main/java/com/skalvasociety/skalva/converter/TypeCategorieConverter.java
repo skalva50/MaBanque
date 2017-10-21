@@ -10,22 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.skalvasociety.skalva.bean.Categorie;
-import com.skalvasociety.skalva.service.ICategorieService;
+import com.skalvasociety.skalva.service.ITypeCategorieService;
 
-@Service("categorieConverter")
-public class CategorieConverter implements Converter {
-	// Overrider la methode equals de l'objet à convertir
+@Service("typeCategorieConverter")
+public class TypeCategorieConverter implements Converter {
 	
 	@Autowired
-	private ICategorieService categorieService; 
-
-	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {		
+	private ITypeCategorieService typeCategorieService; 
+	
+	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
 		if(value != null && value.trim().length() > 0) {
 			try{				
-				if(categorieService == null){
+				if(typeCategorieService == null){
 					return null;
 				}else{
-					return categorieService.getByKey(Integer.parseInt(value));
+					return typeCategorieService.getByKey(Integer.parseInt(value));
 				}				
             } catch(NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid categorie."));
