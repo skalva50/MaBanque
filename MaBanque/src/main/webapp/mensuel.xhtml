@@ -17,16 +17,16 @@
 		        <p:calendar id="event" value="#{mensuelView.dateSelected}"  navigator="true">
 		            <p:ajax event="dateSelect" listener="#{mensuelView.onDateSelect}" process="@form" update="@form" />
 		        </p:calendar>
-		        <p:commandButton value="Rafraichir" id="reload" update="tableMensuel pieModel total" actionListener="#{mensuelView.reload}" styleClass="ui-priority-primary" />
+		        <p:commandButton value="Rafraichir" id="reload" update="tableMensuel pieModelDetails pieModelTotal total" actionListener="#{mensuelView.reload}" styleClass="ui-priority-primary" />
 			</h:panelGrid>  
 			
 			<p:outputLabel id="total" value="Total: #{mensuelView.total} €" style="font-size: 30px;"  />
 	        <div class="ui-g">
     			<div class="ui-g-6">
-    				<p:chart id="pieModel" type="pie" model="#{mensuelView.pieModel}" style="width:90%;height:500px" />
+    				<p:chart id="pieModelTotal" type="pie" model="#{mensuelView.pieModelTotal}" style="width:90%;height:500px" />    				
     			</div>
     			<div class="ui-g-6">
-    				<p:chart id="pieModel1" type="pie" model="#{mensuelView.pieModel}" style="width:90%;height:500px" />
+    				<p:chart id="pieModelDetails" type="pie" model="#{mensuelView.pieModelDetails}" style="width:90%;height:500px" />
     			</div>
 			</div>        
 	    	<p:dataTable value="#{mensuelView.operations}"

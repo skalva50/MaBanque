@@ -44,7 +44,8 @@ public class MensuelView implements Serializable {
 	private int categorieSelect;	
 	
 	// Pie
-	private PieChartModel pieModel;
+	private PieChartModel pieModelDetails;
+	private PieChartModel pieModelTotal;
 	
 	// Champ
 	private Double total;
@@ -53,7 +54,8 @@ public class MensuelView implements Serializable {
     public void init() {
 		categories = categorieService.getAll();
 		filterOperationByDate();
-		createPieModel();
+		createPieModelDetails();
+		createPieModelTotal();
     }	
 	
 	private void filterOperationByDate() {
@@ -90,20 +92,31 @@ public class MensuelView implements Serializable {
     	operationBDD.setCategorie(categorie);    	
     }  
     
-    private void createPieModel() {
-    	pieModel = new PieChartModel();
+    private void createPieModelDetails() {
+    	pieModelDetails = new PieChartModel();
     	HashMap<String,Double> categorieMontant = service.getMonthCategorie(dateSelected);
     	setTotal(0d);
     	for (Entry<String, Double> categorie : categorieMontant.entrySet()) {
-    		pieModel.set(categorie.getKey(), categorie.getValue());			
+    		pieModelDetails.set(categorie.getKey(), categorie.getValue());			
     		setTotal(getTotal()+categorie.getValue());
-		}  
+		}
+    	// Mise à jour du total mensuel
     	setTotal(Math.round( getTotal() * 100.0 ) / 100.0);
     	
-    	pieModel.setTitle("Repartition dépenses");
-    	pieModel.setLegendPosition("e");
+    	pieModelDetails.setTitle("Repartition details dépenses");
+    	pieModelDetails.setLegendPosition("e");
     }
-
+    
+    private void createPieModelTotal() {
+    	pieModelTotal = new PieChartModel();
+    	HashMap<String,Double> categorieMontant = service.getMonthTypeCategorie(dateSelected);    	
+    	for (Entry<String, Double> categorie : categorieMontant.entrySet()) {
+    		pieModelTotal.set(categorie.getKey(), categorie.getValue());		    		
+		}    	
+    	pieModelTotal.setTitle("Repartition dépenses");
+    	pieModelTotal.setLegendPosition("e");
+    }  
+    
 	public List<Operation> getOperations() {
 		return operations;
 	}	
@@ -136,8 +149,12 @@ public class MensuelView implements Serializable {
 		this.categorieSelect = categorieSelect;
 	}
 
-	public PieChartModel getPieModel() {
-		return pieModel;
+	public PieChartModel getPieModelDetails() {
+		return pieModelDetails;
+	}
+	
+	public PieChartModel getPieModelTotal() {
+		return pieModelTotal;
 	}
 
 	public Double getTotal() {

@@ -1,14 +1,16 @@
 package com.skalvasociety.skalva.view;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.el.ELContext;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.skalvasociety.skalva.bean.Categorie;
 import com.skalvasociety.skalva.bean.Operation;
+import com.skalvasociety.skalva.converter.DateConverter;
 import com.skalvasociety.skalva.service.ICategorieService;
 import com.skalvasociety.skalva.service.IOperationService;
 
@@ -45,12 +48,13 @@ public class AccueilView {
 	//Graphe line total
 	private LineChartModel lineTotalModel;
 	private List<Operation> operations;
+	private LineChartSeries recetteSerie;
 	
 	// Graphe line categories
 	private LineChartModel lineCategorieModel;
 	private List<Categorie> categories;
-	private Categorie categorieSelect;
-	
+	private Categorie categorieSelect;	
+
 	@PostConstruct
     public void init() {		
 		operations = service.getAllCourant();
@@ -63,25 +67,53 @@ public class AccueilView {
         init();
     }
     
-    public void itemSelect(ItemSelectEvent event) {
-    	System.out.println("itemselect!!!");
-    	FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "mensuel");    	
+    public void itemSelect(ItemSelectEvent event) {    	
+    	
+    	// Recuperation de la hashmap d'alimentation du graphe
+    	Set<Entry<Object, Number>> mapValues = recetteSerie.getData().entrySet();
+    	
+    	// Transformation en Array pour recupérer l'index
+    	@SuppressWarnings("unchecked")
+		Entry<Object,Number>[] test = new Entry[mapValues.size()];
+    	mapValues.toArray(test);
+    	String sDate = test[event.getItemIndex()].getKey().toString();
+    	// Conversion de la date string recuperé en Date
+    	Date date = null;    	
+    	try {
+            date = new DateConverter().stringToDate(sDate, "yyyy-MM-dd");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }    	
+
+    	// Recuperation du managedBean lié
+    	FacesContext context = FacesContext.getCurrentInstance();
+        ELContext elContext = context.getELContext();
+        MensuelView mensuelView  = (MensuelView) elContext.getELResolver().getValue(elContext, null, "mensuelView");
+        // Mise à jour du managed bean
+    	mensuelView.setDateSelected(date);
+    	mensuelView.init();
+    	// Redirection vers la page XHTML
+    	FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "mensuel"); 
     }
     
+    /**
+     * Creer le graphe du bilan total ( recettes , depenses)
+     */
     private void createLineTotalModel() {
     	lineTotalModel = new LineChartModel();
         Date dateMin = null;
         Date dateMax = null;
     	
-        LineChartSeries recetteSerie = new LineChartSeries();
+        // Ligne des recettes
+        recetteSerie = new LineChartSeries();
     	recetteSerie.setLabel("Recettes");    	
-        HashMap<String,Double> recettesMensuels = service.recetteMensuels();
+        LinkedHashMap<String,Double> recettesMensuels = service.recetteMensuels();
         Date date;
         for (Entry<String, Double> recette :recettesMensuels.entrySet()) {
-        	recetteSerie.set(recette.getKey(), recette.getValue());
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");    	
+        	recetteSerie.set(recette.getKey(), recette.getValue());  
+        	// Mise à jour des dates min et max ( pour bornes du graphe)
 			try {
-				date = formatter.parse(recette.getKey());
+				date = new DateConverter().stringToDate(recette.getKey(),"yyyy-MM-dd");  
 	        	if(dateMin == null || dateMin.compareTo(date) > 0){
 	        		dateMin = date;
 	        	}
@@ -92,18 +124,17 @@ public class AccueilView {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-
-       
+		}       
         
+        // Ligne des depenses
         LineChartSeries depensesSerie = new LineChartSeries();
     	depensesSerie.setLabel("Depenses"); 
         HashMap<String,Double> depensesMensuels = service.depensesMensuels();        
         for (Entry<String, Double> depense :depensesMensuels.entrySet()) {
-        	depensesSerie.set(depense.getKey(), depense.getValue());        	
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");      	
+        	depensesSerie.set(depense.getKey(), depense.getValue());       	
+        	// Mise à jour des dates min et max ( pour bornes du graphe)
 			try {
-				date = formatter.parse(depense.getKey());
+				date =  new DateConverter().stringToDate(depense.getKey(),"yyyy-MM-dd");
 	        	if(dateMin == null || dateMin.compareTo(date) > 0){
 	        		dateMin = date;
 	        	}
@@ -125,21 +156,11 @@ public class AccueilView {
         
         
         lineTotalModel.getAxis(AxisType.Y).setLabel("Montant");
-        DateAxis axis = new DateAxis("Dates");
+        DateAxis axis = new DateAxis("Dates");       
         
-        Calendar calendarMin = Calendar.getInstance();
-        calendarMin.setTime(dateMin);        
-        int month = calendarMin.get(Calendar.MONTH);
-        int year = calendarMin.get(Calendar.YEAR);
-        String sDateMin = year+"-"+month+"-01"; 
-        
-        
-        Calendar calendarMax = Calendar.getInstance();        
-        calendarMax.setTime(dateMax);
-        calendarMax.add(Calendar.MONTH, 2);
-        month = calendarMax.get(Calendar.MONTH)+1;
-        year = calendarMax.get(Calendar.YEAR);
-        String sDateMax = year+"-"+month+"-01"; 
+        // Conversion des dates min et max en string( necessaire à la hasmpap du graphe)
+        String sDateMin = new DateConverter().dateToStringAddMonth(dateMin,-1, "yyyy-MM-dd");       
+        String sDateMax = new DateConverter().dateToStringAddMonth(dateMax,2, "yyyy-MM-dd");
         
         axis.setMin(sDateMin);
         axis.setMax(sDateMax);
@@ -147,7 +168,10 @@ public class AccueilView {
          
         lineTotalModel.getAxes().put(AxisType.X, axis);
     } 
-
+    
+    /**
+     * Crée le graphe du bilan par categorie 
+     */
     private void createLineModels() {
         
     	lineCategorieModel = new LineChartModel();
@@ -167,6 +191,8 @@ public class AccueilView {
         lineCategorieModel.getAxes().put(AxisType.X, axis);
         
     	ChartSeries categorieSerie = new ChartSeries();
+    	
+    	// Categorie selectoinné par defaut
     	if(categorieSelect == null){ 
     		categorieSelect = categorieService.getByKey(2);
     	}  	
@@ -176,10 +202,10 @@ public class AccueilView {
     	Date date;
         HashMap<String,Double> categorieMonth = service.getCategorieMonth(categorieSelect);
         for (Entry<String, Double> categorieMensuel :categorieMonth.entrySet()) {
-        	categorieSerie.set(categorieMensuel.getKey(), categorieMensuel.getValue());
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");      	
+        	categorieSerie.set(categorieMensuel.getKey(), categorieMensuel.getValue());  
+        	// Mise à jour des dates min et max ( pour bornes du graphe)
 			try {
-				date = formatter.parse(categorieMensuel.getKey());
+				date = new DateConverter().stringToDate(categorieMensuel.getKey(),"yyyy-MM-dd");
 	        	if(dateMin == null || dateMin.compareTo(date) > 0){
 	        		dateMin = date;
 	        	}
@@ -190,20 +216,9 @@ public class AccueilView {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}      
-        Calendar calendarMin = Calendar.getInstance();
-        calendarMin.setTime(dateMin);        
-        int month = calendarMin.get(Calendar.MONTH);
-        int year = calendarMin.get(Calendar.YEAR);
-        String sDateMin = year+"-"+month+"-01"; 
-        
-        
-        Calendar calendarMax = Calendar.getInstance();        
-        calendarMax.setTime(dateMax);
-        calendarMax.add(Calendar.MONTH, 2);
-        month = calendarMax.get(Calendar.MONTH)+1;
-        year = calendarMax.get(Calendar.YEAR);
-        String sDateMax = year+"-"+month+"-01"; 
+		}     
+        String sDateMin = new DateConverter().dateToStringAddMonth(dateMin,-1, "yyyy-MM-dd");       
+        String sDateMax = new DateConverter().dateToStringAddMonth(dateMax,2, "yyyy-MM-dd");
         
         axis.setMin(sDateMin);
         axis.setMax(sDateMax);

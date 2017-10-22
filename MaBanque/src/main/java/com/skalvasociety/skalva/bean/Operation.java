@@ -1,6 +1,5 @@
 package com.skalvasociety.skalva.bean;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -12,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.skalvasociety.skalva.converter.DateConverter;
 
 @Entity
 @Table(name="OPERATION")
@@ -29,12 +30,8 @@ public class Operation {
     private String mois;
     
 	 @Transient
-    public String getMois() {        
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getDateOperation());        
-        int month = calendar.get(Calendar.MONTH)+1;
-        int year = calendar.get(Calendar.YEAR);
-        return year+"-"+month+"-01";      
+    public String getMois() {   
+		 return new DateConverter().dateToStringMonth(getDateOperation(), "yyyy-MM-dd");
     }
     
     public void setMois(String mois){

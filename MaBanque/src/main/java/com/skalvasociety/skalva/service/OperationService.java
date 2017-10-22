@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.skalvasociety.skalva.bean.AssOperationCategorie;
 import com.skalvasociety.skalva.bean.Categorie;
 import com.skalvasociety.skalva.bean.Operation;
+import com.skalvasociety.skalva.converter.DateConverter;
 import com.skalvasociety.skalva.dao.IAssOperationCategorie;
 import com.skalvasociety.skalva.dao.IOperationDao;
 
@@ -55,10 +57,31 @@ public class OperationService implements IOperationService {
 		return dao.getByKey(key);
 	}
 	
-	public HashMap<String,Double> recetteMensuels(){
-		HashMap<String,Double> recetteMensuels = new HashMap<String, Double>();
-		List<Operation> liste = getAllCourant();
-		for (Operation operation : liste) {
+	public LinkedHashMap<String,Double> recetteMensuels(){
+		LinkedHashMap<String,Double> recetteMensuels = new LinkedHashMap<String, Double>();
+		List<Operation> listeOperations = getAllCourant();
+		// Creation liste des dates
+		List<Date> listeDates = new LinkedList<Date>();
+		for (Operation operation : listeOperations) {
+			try {
+				Date date = new DateConverter().stringToDate(operation.getMois(), "yyyy-MM-dd");
+				if(!listeDates.contains(date)){
+					listeDates.add(date);
+				}				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// Date ordonnée
+		Collections.sort(listeDates);
+		// Ajout des dates ordonnées dans la linkedhashmap
+		for (Date date : listeDates) {
+			recetteMensuels.put(new DateConverter().dateToString(date, "yyyy-MM-dd"), 0d);
+		}
+		
+		
+		for (Operation operation : listeOperations) {
 			if(operation.isSens() && operation.getCategorie() != null && !operation.getCategorie().getHorsStats() ){
 				String mois = operation.getMois();
 				if(!recetteMensuels.containsKey(mois)){
@@ -72,10 +95,30 @@ public class OperationService implements IOperationService {
 		return recetteMensuels;		
 	}
 	
-	public HashMap<String,Double> depensesMensuels(){
-		HashMap<String,Double> depensesMensuels = new HashMap<String, Double>();
-		List<Operation> liste = getAllCourant();
-		for (Operation operation : liste) {
+	public LinkedHashMap<String,Double> depensesMensuels(){
+		LinkedHashMap<String,Double> depensesMensuels = new LinkedHashMap<String, Double>();
+		List<Operation> listeOperations = getAllCourant();
+		// Creation liste des dates
+		List<Date> listeDates = new LinkedList<Date>();
+		for (Operation operation : listeOperations) {
+			try {
+				Date date = new DateConverter().stringToDate(operation.getMois(), "yyyy-MM-dd");
+				if(!listeDates.contains(date)){
+					listeDates.add(date);
+				}				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// Date ordonnée
+		Collections.sort(listeDates);
+		// Ajout des dates ordonnées dans la linkedhashmap
+		for (Date date : listeDates) {
+			depensesMensuels.put(new DateConverter().dateToString(date, "yyyy-MM-dd"), 0d);
+		}		
+		
+		for (Operation operation : listeOperations) {
 			if(!operation.isSens() && operation.getCategorie()!= null && !operation.getCategorie().getHorsStats()){
 				String mois = operation.getMois();
 				if(!depensesMensuels.containsKey(mois)){
@@ -198,5 +241,23 @@ public class OperationService implements IOperationService {
 			}			
 		}	
 		return categorieMontant;	
+	}
+
+	public HashMap<String, Double> getMonthTypeCategorie(Date date) {
+		List<Operation> operations = getByMonth(date);
+		LinkedHashMap<String,Double> categorieMontant = new LinkedHashMap<String, Double>();
+		if(date == null)
+			return categorieMontant;		
+		for (Operation operation : operations) {
+			if(operation.getCategorie() != null && !operation.isSens()  && !operation.getCategorie().getHorsStats()){
+				String categorie = operation.getCategorie().getTypeCategorie().getLibelle();
+				if(!categorieMontant.containsKey(categorie)){
+					categorieMontant.put(categorie, operation.getMontant());				
+				}else{
+					categorieMontant.put(categorie, categorieMontant.get(categorie)+operation.getMontant());				
+				}
+			}			
+		}	
+		return categorieMontant;
 	}
 }
