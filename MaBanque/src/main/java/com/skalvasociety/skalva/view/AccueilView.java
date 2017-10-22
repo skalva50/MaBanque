@@ -59,16 +59,25 @@ public class AccueilView {
 	private LineChartModel lineCategorieModel;
 	private List<Categorie> categories;
 	private Categorie categorieSelect;	
+	
+	// Graphe line epargnes
+	private LineChartModel lineEpargneModel;
+	
+	// Champ
+	private Double soldeEpargne;
 
 	@PostConstruct
     public void init() {		
 		operations = service.getAllCourant();
+		Date date = new DateConverter().getDateNow();
+		soldeEpargne = service.getSoldeEpargne(date);
 		setCategories(categorieService.getAll());
-		createLineModels();
+		createLineCategorieModels();
 		createLineTotalModel();
+		createlineEpargneModel();
     }
-	
-    public void reload(ActionEvent actionEvent) {        
+
+	public void reload(ActionEvent actionEvent) {        
         init();
     }
     
@@ -198,7 +207,7 @@ public class AccueilView {
     /**
      * Crée le graphe du bilan par categorie 
      */
-    private void createLineModels() {
+    private void createLineCategorieModels() {
         
     	lineCategorieModel = new LineChartModel();
         Date dateMin = null;
@@ -250,6 +259,80 @@ public class AccueilView {
         axis.setMax(sDateMax);
         lineCategorieModel.addSeries(categorieSerie);       
     }   
+    
+    public void createlineEpargneModel() {
+    	lineEpargneModel = new LineChartModel();
+        Date dateMin = null;
+        Date dateMax = null;
+        
+        lineEpargneModel.setTitle("Epargne");
+        lineEpargneModel.setAnimate(true);
+        lineEpargneModel.setLegendPosition("ne");
+        lineEpargneModel.setShowPointLabels(true);
+        
+        Axis yAxis = lineEpargneModel.getAxis(AxisType.Y);
+        yAxis.setLabel("Montant");
+        
+        DateAxis axis = new DateAxis("Dates");
+        axis.setTickFormat("%b %y");         
+        lineEpargneModel.getAxes().put(AxisType.X, axis);
+        
+    	ChartSeries epargneRecetteSerie = new ChartSeries();  	
+    	epargneRecetteSerie.setLabel("Recettes");
+    	ChartSeries soldeSerie = new ChartSeries();  	
+    	soldeSerie.setLabel("Solde");
+    	Date date;
+    	Double solde;
+        HashMap<String,Double> epargneRecetteMensuels = service.getEpargneRecetteMensuels();
+        for (Entry<String, Double> epargneRecetteMensuel :epargneRecetteMensuels.entrySet()) {
+        	epargneRecetteSerie.set(epargneRecetteMensuel.getKey(), epargneRecetteMensuel.getValue());  
+        	// Mise à jour des dates min et max ( pour bornes du graphe)
+        	// Ajout du solde mensuel
+			try {
+				date = new DateConverter().stringToDate(epargneRecetteMensuel.getKey(),"yyyy-MM-dd");
+				solde = service.getSoldeEpargne(date);
+				soldeSerie.set(epargneRecetteMensuel.getKey(), solde);
+	        	if(dateMin == null || dateMin.compareTo(date) > 0){
+	        		dateMin = date;
+	        	}
+	        	if(dateMax == null || dateMax.compareTo(date) < 0){
+	        		dateMax = date;
+	        	}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}  
+        
+    	ChartSeries epargneDepensesSerie = new ChartSeries();  	
+    	epargneDepensesSerie.setLabel("Depenses");    	
+        HashMap<String,Double> epargneDepensesMensuels = service.getEpargneDepenseMensuels();
+        for (Entry<String, Double> epargneDepensesMensuel :epargneDepensesMensuels.entrySet()) {
+        	epargneDepensesSerie.set(epargneDepensesMensuel.getKey(), epargneDepensesMensuel.getValue());  
+        	// Mise à jour des dates min et max ( pour bornes du graphe)
+			try {
+				date = new DateConverter().stringToDate(epargneDepensesMensuel.getKey(),"yyyy-MM-dd");
+	        	if(dateMin == null || dateMin.compareTo(date) > 0){
+	        		dateMin = date;
+	        	}
+	        	if(dateMax == null || dateMax.compareTo(date) < 0){
+	        		dateMax = date;
+	        	}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+        
+        String sDateMin = new DateConverter().dateToStringAddMonth(dateMin,-1, "yyyy-MM-dd");       
+        String sDateMax = new DateConverter().dateToStringAddMonth(dateMax,2, "yyyy-MM-dd");
+        
+        axis.setMin(sDateMin);
+        axis.setMax(sDateMax);
+        lineEpargneModel.addSeries(epargneRecetteSerie);   
+        lineEpargneModel.addSeries(epargneDepensesSerie);  
+        lineEpargneModel.addSeries(soldeSerie);  
+	}
 
     
     public void onCategorieChange(){
@@ -302,4 +385,20 @@ public class AccueilView {
 	public void setLineTotalModel(LineChartModel lineTotalModel) {
 		this.lineTotalModel = lineTotalModel;
 	}	
+	
+	public LineChartModel getLineEpargneModel() {
+		return lineEpargneModel;
+	}
+
+	public void setLineEpargneModel(LineChartModel lineEpargneModel) {
+		this.lineEpargneModel = lineEpargneModel;
+	}
+
+	public Double getSoldeEpargne() {
+		return soldeEpargne;
+	}
+
+	public void setSoldeEpargne(Double soldeEpargne) {
+		this.soldeEpargne = soldeEpargne;
+	}
 }

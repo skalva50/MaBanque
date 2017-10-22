@@ -43,6 +43,10 @@ public class OperationService implements IOperationService {
 	public List<Operation> getAllCourant() {		
 		return dao.getAllCourant();
 	}
+	
+	public List<Operation> getAllEpargne() {		
+		return dao.getAllEpargne();
+	}
 
 	public void save(Operation operation) {
 		dao.save(operation);
@@ -94,6 +98,82 @@ public class OperationService implements IOperationService {
 			}			
 		}
 		return recetteMensuels;		
+	}
+	
+	public LinkedHashMap<String,Double> getEpargneRecetteMensuels(){
+		LinkedHashMap<String,Double> epargneRecetteMensuels = new LinkedHashMap<String, Double>();
+		List<Operation> listeOperations = getAllEpargne();
+		// Creation liste des dates
+		List<Date> listeDates = new LinkedList<Date>();
+		for (Operation operation : listeOperations) {
+			try {
+				Date date = new DateConverter().stringToDate(operation.getMois(), "yyyy-MM-dd");
+				if(!listeDates.contains(date)){
+					listeDates.add(date);
+				}				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// Date ordonnée
+		Collections.sort(listeDates);
+		// Ajout des dates ordonnées dans la linkedhashmap
+		for (Date date : listeDates) {
+			epargneRecetteMensuels.put(new DateConverter().dateToString(date, "yyyy-MM-dd"), 0d);
+		}
+		
+		
+		for (Operation operation : listeOperations) {
+			if(operation.isSens()){
+				String mois = operation.getMois();
+				if(!epargneRecetteMensuels.containsKey(mois)){
+					epargneRecetteMensuels.put(mois, operation.getMontant());
+					
+				}else{
+					epargneRecetteMensuels.put(mois, epargneRecetteMensuels.get(mois)+operation.getMontant());				
+				}
+			}			
+		}
+		return epargneRecetteMensuels;		
+	}
+	
+	public LinkedHashMap<String,Double> getEpargneDepenseMensuels(){
+		LinkedHashMap<String,Double> epargneDepenseMensuels = new LinkedHashMap<String, Double>();
+		List<Operation> listeOperations = getAllEpargne();
+		// Creation liste des dates
+		List<Date> listeDates = new LinkedList<Date>();
+		for (Operation operation : listeOperations) {
+			try {
+				Date date = new DateConverter().stringToDate(operation.getMois(), "yyyy-MM-dd");
+				if(!listeDates.contains(date)){
+					listeDates.add(date);
+				}				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// Date ordonnée
+		Collections.sort(listeDates);
+		// Ajout des dates ordonnées dans la linkedhashmap
+		for (Date date : listeDates) {
+			epargneDepenseMensuels.put(new DateConverter().dateToString(date, "yyyy-MM-dd"), 0d);
+		}
+		
+		
+		for (Operation operation : listeOperations) {
+			if(!operation.isSens()){
+				String mois = operation.getMois();
+				if(!epargneDepenseMensuels.containsKey(mois)){
+					epargneDepenseMensuels.put(mois, operation.getMontant());
+					
+				}else{
+					epargneDepenseMensuels.put(mois, epargneDepenseMensuels.get(mois)+operation.getMontant());				
+				}
+			}			
+		}
+		return epargneDepenseMensuels;		
 	}
 	
 	public LinkedHashMap<String,Double> recetteMensuelsByTypeCategorie(TypeCategorie typeCategorie){
@@ -318,5 +398,21 @@ public class OperationService implements IOperationService {
 		}
 		soldeCourant = Math.round( soldeCourant * 100.0 ) / 100.0;
 		return soldeCourant;
+	}
+	
+	public Double getSoldeEpargne(Date dateSolde){		
+		Double soldeEpargne = 0d;
+		List<Operation> listeOperations = getAllEpargne();
+		for (Operation operation : listeOperations) {
+			if(operation.getDateOperation().before(dateSolde)){
+				if(operation.isSens()){
+					soldeEpargne = soldeEpargne+operation.getMontant();
+				}else{
+					soldeEpargne = soldeEpargne-operation.getMontant();
+				}	
+			}				
+		}
+		soldeEpargne = Math.round( soldeEpargne * 100.0 ) / 100.0;
+		return soldeEpargne;
 	}
 }

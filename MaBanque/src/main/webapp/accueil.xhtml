@@ -11,7 +11,7 @@
     <ui:define name="content">
     <div>   
     	<h1>Evolution mensuel</h1>
-    	<p:commandButton value="Rafraichir" id="reload" update="grapheTotalLine grapheCategorie" actionListener="#{accueilView.reload}" styleClass="ui-priority-primary" />    	
+    	<p:commandButton value="Rafraichir" id="reload" update="grapheTotalLine grapheCategorie grapheEpargne" actionListener="#{accueilView.reload}" styleClass="ui-priority-primary" />    	
     	<p:chart id="grapheTotalLine" type="line" model="#{accueilView.lineTotalModel}" style="height:800px;">
     		<p:ajax event="itemSelect" listener="#{accueilView.itemSelect}"/>
     	</p:chart>
@@ -28,7 +28,9 @@
 			</h:form>          
 		</h:panelGrid>
     	<p:chart id="grapheCategorie" type="line" model="#{accueilView.lineCategorieModel}" style="height:600px;"/>
-
+    	<h1>Evolution mensuel epargne</h1>
+    	<p:outputLabel id="soldeEpargne" value="Solde épargne: #{accueilView.soldeEpargne} €" style="font-size: 30px;"  />
+		<p:chart id="grapheEpargne" type="line" model="#{accueilView.lineEpargneModel}" style="height:600px;"/>
     </div>
     </ui:define>
     </ui:composition>

@@ -61,4 +61,10 @@ public class DateConverter {
         }
         return sDate;        
 	}
+	
+	public Date getDateNow(){
+		Calendar calendar = Calendar.getInstance();
+		Date date = calendar.getTime();
+		return date;
+	}
 }

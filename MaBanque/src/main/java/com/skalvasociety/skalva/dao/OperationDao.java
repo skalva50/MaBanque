@@ -20,7 +20,12 @@ public class OperationDao extends AbstractDao<Integer,Operation> implements IOpe
 		return (List<Operation>) criteria.list();
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	public List<Operation> getAllEpargne() {
+		Criteria criteria = createEntityCriteria();
+		criteria.add(Restrictions.eq("numcompte","82183213361"));
+		return (List<Operation>) criteria.list();
+	}	
 
 	@Override
 	public void save(Operation operation) {
@@ -42,6 +47,4 @@ public class OperationDao extends AbstractDao<Integer,Operation> implements IOpe
 			return true;
 		}
 	}
-
-
 }

@@ -13,6 +13,7 @@ import com.skalvasociety.skalva.bean.TypeCategorie;
 public interface IOperationService {
 	public List<Operation> getAll();
 	public List<Operation> getAllCourant();
+	public List<Operation> getAllEpargne();
 	public List<Operation> getByMonth(Date date);
 	public void save(Operation operation);
 	public void delete(Operation operation);
@@ -25,4 +26,7 @@ public interface IOperationService {
 	public HashMap<String,Double> getMonthTypeCategorie(Date date);
 	public void loadOperation(InputStream inputStream);
 	public Double getSoldeCourant(Date dateSolde);
+	public LinkedHashMap<String,Double> getEpargneDepenseMensuels();
+	public LinkedHashMap<String,Double> getEpargneRecetteMensuels();
+	public Double getSoldeEpargne(Date dateSolde);
 }
