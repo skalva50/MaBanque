@@ -19,8 +19,14 @@
 		        </p:calendar>
 		        <p:commandButton value="Rafraichir" id="reload" update="tableMensuel pieModelDetails pieModelTotal total" actionListener="#{mensuelView.reload}" styleClass="ui-priority-primary" />
 			</h:panelGrid>  
-			
-			<p:outputLabel id="total" value="Total: #{mensuelView.total} €" style="font-size: 30px;"  />
+			<div class="ui-g">
+				<div class="ui-g-6">
+					<p:outputLabel id="total" value="Total dépenses: #{mensuelView.total} €" style="font-size: 30px;"  />
+				</div>
+				<div class="ui-g-6">
+					<p:outputLabel id="solde" value="Solde: #{mensuelView.solde} €" style="font-size: 30px;"  />
+				</div>
+			</div>
 	        <div class="ui-g">
     			<div class="ui-g-6">
     				<p:chart id="pieModelTotal" type="pie" model="#{mensuelView.pieModelTotal}" style="width:90%;height:500px" />    				

@@ -64,6 +64,10 @@ public class Operation {
 	public void setMontant(Double montant) {
 		this.montant = montant;
 	}
+	/**
+	 * Vrai si recette, Faux di depenses
+	 * @return
+	 */
 	public boolean isSens() {
 		return sens;
 	}

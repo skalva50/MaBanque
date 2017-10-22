@@ -22,4 +22,5 @@ public interface IOperationService {
 	public HashMap<String,Double> getMonthCategorie(Date date);
 	public HashMap<String,Double> getMonthTypeCategorie(Date date);
 	public void loadOperation(InputStream inputStream);
+	public Double getSoldeCourant(Date dateSolde);
 }

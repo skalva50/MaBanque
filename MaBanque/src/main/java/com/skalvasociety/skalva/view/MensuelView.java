@@ -49,10 +49,12 @@ public class MensuelView implements Serializable {
 	
 	// Champ
 	private Double total;
+	private Double solde;
 		
 	@PostConstruct
     public void init() {
 		categories = categorieService.getAll();
+		solde = service.getSoldeCourant(getDateSelected());
 		filterOperationByDate();
 		createPieModelDetails();
 		createPieModelTotal();
@@ -163,6 +165,14 @@ public class MensuelView implements Serializable {
 
 	public void setTotal(Double total) {
 		this.total = total;
+	}
+
+	public Double getSolde() {
+		return solde;
+	}
+
+	public void setSolde(Double solde) {
+		this.solde = solde;
 	}
 }
  

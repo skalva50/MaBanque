@@ -260,4 +260,20 @@ public class OperationService implements IOperationService {
 		}	
 		return categorieMontant;
 	}
+	
+	public Double getSoldeCourant(Date dateSolde){		
+		Double soldeCourant = 7227.02;
+		List<Operation> listeOperations = getAllCourant();
+		for (Operation operation : listeOperations) {
+			if(operation.getDateOperation().before(dateSolde)){
+				if(operation.isSens()){
+					soldeCourant = soldeCourant+operation.getMontant();
+				}else{
+					soldeCourant = soldeCourant-operation.getMontant();
+				}
+			}			
+		}
+		soldeCourant = Math.round( soldeCourant * 100.0 ) / 100.0;
+		return soldeCourant;
+	}
 }
