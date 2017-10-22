@@ -9,4 +9,5 @@ public interface ITypeCategorieService {
 	public void save(TypeCategorie typeCategorie);
 	public void delete(TypeCategorie typeCategorie);
 	public TypeCategorie getByKey(int key);
+	public TypeCategorie getByLibelle(String libelle);
 }

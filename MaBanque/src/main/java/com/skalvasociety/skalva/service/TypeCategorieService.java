@@ -32,5 +32,9 @@ public class TypeCategorieService implements ITypeCategorieService {
 		return dao.getByKey(key);
 	}
 
+	public TypeCategorie getByLibelle(String libelle) {		
+		return dao.getByLibelle(libelle);
+	}
+
 
 }

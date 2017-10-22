@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.skalvasociety.skalva.bean.AssOperationCategorie;
 import com.skalvasociety.skalva.bean.Categorie;
 import com.skalvasociety.skalva.bean.Operation;
+import com.skalvasociety.skalva.bean.TypeCategorie;
 import com.skalvasociety.skalva.converter.DateConverter;
 import com.skalvasociety.skalva.dao.IAssOperationCategorie;
 import com.skalvasociety.skalva.dao.IOperationDao;
@@ -93,6 +94,48 @@ public class OperationService implements IOperationService {
 			}			
 		}
 		return recetteMensuels;		
+	}
+	
+	public LinkedHashMap<String,Double> recetteMensuelsByTypeCategorie(TypeCategorie typeCategorie){
+		LinkedHashMap<String,Double> recetteMensuelsByTypeCategorie = new LinkedHashMap<String, Double>();
+		List<Operation> listeOperations = getAllCourant();
+		// Creation liste des dates
+		List<Date> listeDates = new LinkedList<Date>();
+		for (Operation operation : listeOperations) {
+			try {
+				Date date = new DateConverter().stringToDate(operation.getMois(), "yyyy-MM-dd");
+				if(!listeDates.contains(date)){
+					listeDates.add(date);
+				}				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// Date ordonnée
+		Collections.sort(listeDates);
+		// Ajout des dates ordonnées dans la linkedhashmap
+		for (Date date : listeDates) {
+			recetteMensuelsByTypeCategorie.put(new DateConverter().dateToString(date, "yyyy-MM-dd"), 0d);
+		}
+		
+		
+		for (Operation operation : listeOperations) {
+			if(!operation.isSens() &&
+				operation.getCategorie() != null &&
+				!operation.getCategorie().getHorsStats() &&
+				operation.getCategorie().getTypeCategorie().equals(typeCategorie))
+			{
+				String mois = operation.getMois();
+				if(!recetteMensuelsByTypeCategorie.containsKey(mois)){
+					recetteMensuelsByTypeCategorie.put(mois, operation.getMontant());
+					
+				}else{
+					recetteMensuelsByTypeCategorie.put(mois, recetteMensuelsByTypeCategorie.get(mois)+operation.getMontant());				
+				}
+			}			
+		}
+		return recetteMensuelsByTypeCategorie;		
 	}
 	
 	public LinkedHashMap<String,Double> depensesMensuels(){

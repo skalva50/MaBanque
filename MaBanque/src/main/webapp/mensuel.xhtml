@@ -49,7 +49,7 @@
 			    <p:column headerText="Date" style="width:10%" sortBy="#{operation.dateOperation}">
 			        <h:outputText value="#{operation.dateOperation}"> <f:convertDateTime pattern="dd-MMM-yyyy" /></h:outputText>
 			    </p:column>		 
-			    <p:column headerText="Libelle" style="width:40%" sortBy="#{operation.libelle}">
+			    <p:column headerText="Libelle" style="width:25%" sortBy="#{operation.libelle}">
 			    	<h:outputText value="#{operation.libelle}"/>			       
 			    </p:column>
 			   	<p:column headerText="Montant" style="width:10%" sortBy="#{operation.montant}">
@@ -68,7 +68,10 @@
 		                 	</h:selectOneMenu>
 		               	</f:facet>
 		           	</p:cellEditor>
-		       </p:column>			
+		       </p:column>
+		       	<p:column headerText="Type" style="width:15%" sortBy="#{operation.categorie.typeCategorie.libelle}">
+			        <h:outputText value="#{operation.categorie.typeCategorie.libelle}" />
+			    </p:column>			
 		       <p:column style="width:5%" >
 		        	<p:rowEditor/>
 		       </p:column>

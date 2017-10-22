@@ -29,9 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.skalvasociety.skalva.bean.Categorie;
 import com.skalvasociety.skalva.bean.Operation;
+import com.skalvasociety.skalva.bean.TypeCategorie;
 import com.skalvasociety.skalva.converter.DateConverter;
 import com.skalvasociety.skalva.service.ICategorieService;
 import com.skalvasociety.skalva.service.IOperationService;
+import com.skalvasociety.skalva.service.ITypeCategorieService;
 
 @ManagedBean
 @ViewScoped
@@ -44,6 +46,9 @@ public class AccueilView {
 	
 	@Autowired
     private ICategorieService categorieService;
+	
+	@Autowired
+    private ITypeCategorieService typeCategorieService;
 	
 	//Graphe line total
 	private LineChartModel lineTotalModel;
@@ -146,9 +151,30 @@ public class AccueilView {
 				e.printStackTrace();
 			}
 		}
+        
+        // Ligne des charges fixes
+        TypeCategorie typeCategorieChargesFixes = typeCategorieService.getByLibelle("Charges fixes");
+        LineChartSeries chargesFixesSerie = new LineChartSeries();
+        chargesFixesSerie.setLabel("Charges fixes"); 
+        HashMap<String,Double> chargesFixes = service.recetteMensuelsByTypeCategorie(typeCategorieChargesFixes); 
+        for (Entry<String, Double> chargesFixe : chargesFixes.entrySet()) {
+        	chargesFixesSerie.set(chargesFixe.getKey(), chargesFixe.getValue());
+		}
+        
+        // Ligne des charges fixes
+        TypeCategorie typeCategorieLoisirs = typeCategorieService.getByLibelle("Loisirs");
+        LineChartSeries loisirsSerie = new LineChartSeries();
+        loisirsSerie.setLabel("Loisirs"); 
+        HashMap<String,Double> loisirs = service.recetteMensuelsByTypeCategorie(typeCategorieLoisirs); 
+        for (Entry<String, Double> loisir : loisirs.entrySet()) {
+        	loisirsSerie.set(loisir.getKey(), loisir.getValue());
+		}
+        
 
         lineTotalModel.addSeries(recetteSerie);
         lineTotalModel.addSeries(depensesSerie);
+        lineTotalModel.addSeries(chargesFixesSerie);
+        lineTotalModel.addSeries(loisirsSerie);
         lineTotalModel.setTitle("Bilan");    
         lineTotalModel.setAnimate(true);
         lineTotalModel.setLegendPosition("ne");
