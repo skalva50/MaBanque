@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +32,8 @@ import com.skalvasociety.skalva.dao.IOperationDao;
 public class OperationService implements IOperationService {
 	@Autowired 
 	private IOperationDao dao;
+	
+	private static Logger logger = Logger.getLogger(OperationService.class); 
 	
 	@Autowired 
 	private IAssOperationCategorie assOperationCategoriedao;
@@ -53,9 +55,8 @@ public class OperationService implements IOperationService {
 
 	}
 
-	public void delete(Operation operation) {
+	public void delete(Operation operation) {		
 		dao.delete(operation);
-
 	}
 
 	public Operation getByKey(int key) {		
@@ -74,8 +75,7 @@ public class OperationService implements IOperationService {
 					listeDates.add(date);
 				}				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
 		// Date ordonnée
@@ -112,8 +112,7 @@ public class OperationService implements IOperationService {
 					listeDates.add(date);
 				}				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
 		// Date ordonnée
@@ -150,8 +149,7 @@ public class OperationService implements IOperationService {
 					listeDates.add(date);
 				}				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
 		// Date ordonnée
@@ -188,8 +186,7 @@ public class OperationService implements IOperationService {
 					listeDates.add(date);
 				}				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
 		// Date ordonnée
@@ -230,8 +227,7 @@ public class OperationService implements IOperationService {
 					listeDates.add(date);
 				}				
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
 		// Date ordonnée
@@ -290,7 +286,7 @@ public class OperationService implements IOperationService {
 		return categorieMonth;	
 	}
 
-	public void loadOperation(InputStream inputStream) {   	
+	public void loadOperation(InputStream inputStream) throws Exception {   	
     	
     	BufferedReader in;    	
 		List<Operation> listOperation = new LinkedList<Operation>();
@@ -299,7 +295,8 @@ public class OperationService implements IOperationService {
 		int posDate = 2;
 		int posLibelle =3;
 		int posReference = 4;
-		int posMontant = 6;	    	
+		int posMontant = 6;	  
+		int numLigne = 0;
     	
     	try {
 			in = new BufferedReader(new InputStreamReader(inputStream));
@@ -307,7 +304,11 @@ public class OperationService implements IOperationService {
 			// Sauter la ligne de titre:
 			ligne=in.readLine();
 			while ((ligne=in.readLine()) != null) {
-				System.out.println(ligne);
+				numLigne ++;	
+				if (ligne.split(separator).length != 7){
+					Exception e = new Exception("Format ligne "+ numLigne +" du fichier non conforme");
+					throw(e);
+				}
 				Operation operation = new Operation();
 				Date dateOperation = null;				
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");					
@@ -339,11 +340,10 @@ public class OperationService implements IOperationService {
 			}
         	
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e.getCause());
+
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e.getCause());
 		}
 		
 	}

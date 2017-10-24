@@ -24,7 +24,7 @@ public interface IOperationService {
 	public HashMap<String,Double> getCategorieMonth(Categorie categorie);
 	public HashMap<String,Double> getMonthCategorie(Date date);
 	public HashMap<String,Double> getMonthTypeCategorie(Date date);
-	public void loadOperation(InputStream inputStream);
+	public void loadOperation(InputStream inputStream) throws Exception;
 	public Double getSoldeCourant(Date dateSolde);
 	public LinkedHashMap<String,Double> getEpargneDepenseMensuels();
 	public LinkedHashMap<String,Double> getEpargneRecetteMensuels();

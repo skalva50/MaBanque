@@ -24,7 +24,7 @@ public class TypeCategorieService implements ITypeCategorieService {
 		dao.save(typeCategorie);		
 	}
 
-	public void delete(TypeCategorie typeCategorie) {
+	public void delete(TypeCategorie typeCategorie) {		
 		dao.delete(typeCategorie);		
 	}
 

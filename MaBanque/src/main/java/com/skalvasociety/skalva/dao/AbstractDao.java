@@ -40,7 +40,7 @@ private final Class<T> persistentClass;
 
  
     public void delete(T entity) {
-        getSession().delete(entity);
+    	getSession().delete(entity);        
     }
     
     @SuppressWarnings("unchecked")

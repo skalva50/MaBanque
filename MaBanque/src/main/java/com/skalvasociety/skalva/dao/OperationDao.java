@@ -11,13 +11,11 @@ import com.skalvasociety.skalva.bean.Operation;
 @Repository("operationDao")
 public class OperationDao extends AbstractDao<Integer,Operation> implements IOperationDao{
 	
-	
-	
 	@SuppressWarnings("unchecked")
 	public List<Operation> getAllCourant() {
 		Criteria criteria = createEntityCriteria();
-		criteria.add(Restrictions.eq("numcompte","81932331196"));
-		return (List<Operation>) criteria.list();
+		criteria.add(Restrictions.eq("numcompte","81932331196"));		
+		return (List<Operation>) criteria.list();		
 	}
 	
 	@SuppressWarnings("unchecked")

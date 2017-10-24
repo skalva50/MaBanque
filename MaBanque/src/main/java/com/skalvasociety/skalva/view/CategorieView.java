@@ -67,7 +67,7 @@ public class CategorieView implements Serializable {
 	
 	public void delete(){
 		if(selectedCategorie != null){
-			service.delete(selectedCategorie);			
+			service.delete(selectedCategorie);
 		}
 		init();		
 	}

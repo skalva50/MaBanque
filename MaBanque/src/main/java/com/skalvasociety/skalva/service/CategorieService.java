@@ -25,8 +25,7 @@ public class CategorieService  implements ICategorieService {
 	}
 
 	public void delete(Categorie categorie) {
-		dao.delete(categorie);
-		
+			dao.delete(categorie);	
 	}
 
 	public Categorie getByKey(int key) {

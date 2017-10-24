@@ -16,6 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.log4j.Logger;
 import org.primefaces.event.ItemSelectEvent;
 import org.primefaces.model.chart.Axis;
 import org.primefaces.model.chart.AxisType;
@@ -40,6 +41,8 @@ import com.skalvasociety.skalva.service.ITypeCategorieService;
 @Controller
 @Transactional
 public class AccueilView {
+	
+	private static final Logger logger = Logger.getLogger(AccueilView.class);
 	
 	@Autowired
     private IOperationService service;
@@ -90,13 +93,13 @@ public class AccueilView {
     	@SuppressWarnings("unchecked")
 		Entry<Object,Number>[] test = new Entry[mapValues.size()];
     	mapValues.toArray(test);
-    	String sDate = test[event.getItemIndex()].getKey().toString();
+    	String sDate = test[event.getItemIndex()].getKey().toString();    	
     	// Conversion de la date string recuperé en Date
     	Date date = null;    	
     	try {
             date = new DateConverter().stringToDate(sDate, "yyyy-MM-dd");
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e.getCause());
         }    	
 
     	// Recuperation du managedBean lié
@@ -135,8 +138,7 @@ public class AccueilView {
 	        		dateMax = date;
 	        	}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}       
         
@@ -156,8 +158,7 @@ public class AccueilView {
 	        		dateMax = date;
 	        	}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}
         
@@ -248,8 +249,7 @@ public class AccueilView {
 	        		dateMax = date;
 	        	}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}     
         String sDateMin = new DateConverter().dateToStringAddMonth(dateMin,-1, "yyyy-MM-dd");       
@@ -299,8 +299,7 @@ public class AccueilView {
 	        		dateMax = date;
 	        	}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		}  
         
@@ -319,8 +318,7 @@ public class AccueilView {
 	        		dateMax = date;
 	        	}
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(), e.getCause());
 			}
 		} 
         
