@@ -22,11 +22,13 @@ public interface IOperationService {
 	public LinkedHashMap<String,Double> recetteMensuelsByTypeCategorie(TypeCategorie typeCategorie);
 	public LinkedHashMap<String,Double> depensesMensuels();
 	public HashMap<String,Double> getCategorieMonth(Categorie categorie);
-	public HashMap<String,Double> getMonthCategorie(Date date);
-	public HashMap<String,Double> getMonthTypeCategorie(Date date);
+	public LinkedHashMap<String,Number> getMonthCategorie(Date date);
+	public LinkedHashMap<String,Number> getMonthTypeCategorie(Date date);
 	public void loadOperation(InputStream inputStream) throws Exception;
 	public Double getSoldeCourant(Date dateSolde);
 	public LinkedHashMap<String,Double> getEpargneDepenseMensuels();
 	public LinkedHashMap<String,Double> getEpargneRecetteMensuels();
 	public Double getSoldeEpargne(Date dateSolde);
+	public Double getDepensesAnnuels(Date dateFin);
+	public Double getRecettesAnnuels(Date dateFin);
 }

@@ -348,9 +348,9 @@ public class OperationService implements IOperationService {
 		
 	}
 
-	public LinkedHashMap<String, Double> getMonthCategorie(Date date) {
+	public LinkedHashMap<String, Number> getMonthCategorie(Date date) {
 		List<Operation> operations = getByMonth(date);
-		LinkedHashMap<String,Double> categorieMontant = new LinkedHashMap<String, Double>();
+		LinkedHashMap<String,Number> categorieMontant = new LinkedHashMap<String, Number>();
 		if(date == null)
 			return categorieMontant;		
 		for (Operation operation : operations) {
@@ -359,16 +359,16 @@ public class OperationService implements IOperationService {
 				if(!categorieMontant.containsKey(categorie)){
 					categorieMontant.put(categorie, operation.getMontant());				
 				}else{
-					categorieMontant.put(categorie, categorieMontant.get(categorie)+operation.getMontant());				
+					categorieMontant.put(categorie, categorieMontant.get(categorie).doubleValue()+operation.getMontant());				
 				}
 			}			
 		}	
 		return categorieMontant;	
 	}
 
-	public HashMap<String, Double> getMonthTypeCategorie(Date date) {
+	public LinkedHashMap<String, Number> getMonthTypeCategorie(Date date) {
 		List<Operation> operations = getByMonth(date);
-		LinkedHashMap<String,Double> categorieMontant = new LinkedHashMap<String, Double>();
+		LinkedHashMap<String,Number> categorieMontant = new LinkedHashMap<String, Number>();
 		if(date == null)
 			return categorieMontant;		
 		for (Operation operation : operations) {
@@ -377,7 +377,7 @@ public class OperationService implements IOperationService {
 				if(!categorieMontant.containsKey(categorie)){
 					categorieMontant.put(categorie, operation.getMontant());				
 				}else{
-					categorieMontant.put(categorie, categorieMontant.get(categorie)+operation.getMontant());				
+					categorieMontant.put(categorie, categorieMontant.get(categorie).floatValue()+operation.getMontant());				
 				}
 			}			
 		}	
@@ -414,5 +414,35 @@ public class OperationService implements IOperationService {
 		}
 		soldeEpargne = Math.round( soldeEpargne * 100.0 ) / 100.0;
 		return soldeEpargne;
+	}
+	
+	public Double getDepensesAnnuels(Date dateFin){		
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateFin);      
+        calendar.add(Calendar.YEAR, -1);
+        Date dateDebut = calendar.getTime();	       
+		List<Operation> listeOperations = getAllCourant();		
+		Double depenses = 0d;
+		for (Operation operation : listeOperations) {
+			if(!operation.isSens() && operation.getDateOperation().after(dateDebut) && operation.getDateOperation().before(dateFin)){
+				depenses = depenses + operation.getMontant();
+			}
+		}
+		return Math.round( depenses * 100.0 ) / 100.0;		
+	}
+	
+	public Double getRecettesAnnuels(Date dateFin){		
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateFin);      
+        calendar.add(Calendar.YEAR, -1);
+        Date dateDebut = calendar.getTime();	       
+		List<Operation> listeOperations = getAllCourant();		
+		Double recettes = 0d;
+		for (Operation operation : listeOperations) {
+			if(operation.isSens() && operation.getDateOperation().after(dateDebut) && operation.getDateOperation().before(dateFin)){
+				recettes = recettes + operation.getMontant();
+			}
+		}
+		return Math.round( recettes * 100.0 ) / 100.0;		
 	}
 }

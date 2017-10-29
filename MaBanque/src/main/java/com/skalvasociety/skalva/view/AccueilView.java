@@ -68,12 +68,18 @@ public class AccueilView {
 	
 	// Champ
 	private Double soldeEpargne;
+	private Double soldeCourant;
+	private Double depensesAnnuel;
+	private Double recettesAnnuel;
 
 	@PostConstruct
     public void init() {		
 		operations = service.getAllCourant();
 		Date date = new DateConverter().getDateNow();
 		soldeEpargne = service.getSoldeEpargne(date);
+		soldeCourant = service.getSoldeCourant(date);
+		depensesAnnuel = service.getDepensesAnnuels(date);
+		recettesAnnuel = service.getRecettesAnnuels(date);
 		setCategories(categorieService.getAll());
 		createLineCategorieModels();
 		createLineTotalModel();
@@ -398,5 +404,29 @@ public class AccueilView {
 
 	public void setSoldeEpargne(Double soldeEpargne) {
 		this.soldeEpargne = soldeEpargne;
+	}
+
+	public Double getSoldeCourant() {
+		return soldeCourant;
+	}
+
+	public void setSoldeCourant(Double soldeCourant) {
+		this.soldeCourant = soldeCourant;
+	}
+
+	public Double getDepensesAnnuel() {
+		return depensesAnnuel;
+	}
+
+	public void setDepensesAnnuel(Double depensesAnnuel) {
+		this.depensesAnnuel = depensesAnnuel;
+	}
+
+	public Double getRecettesAnnuel() {
+		return recettesAnnuel;
+	}
+
+	public void setRecettesAnnuel(Double recettesAnnuel) {
+		this.recettesAnnuel = recettesAnnuel;
 	}
 }

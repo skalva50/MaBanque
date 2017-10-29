@@ -29,10 +29,10 @@
 			</div>
 	        <div class="ui-g">
     			<div class="ui-g-6">
-    				<p:chart id="pieModelTotal" type="pie" model="#{mensuelView.pieModelTotal}" style="width:90%;height:500px" />    				
+    				<p:chart id="pieModelTotal" type="donut" model="#{mensuelView.pieModelTotal}" style="width:90%;height:500px" />    				
     			</div>
     			<div class="ui-g-6">
-    				<p:chart id="pieModelDetails" type="pie" model="#{mensuelView.pieModelDetails}" style="width:90%;height:500px" />
+    				<p:chart id="pieModelDetails" type="donut" model="#{mensuelView.pieModelDetails}" style="width:90%;height:500px" />
     			</div>
 			</div>        
 	    	<p:dataTable value="#{mensuelView.operations}"

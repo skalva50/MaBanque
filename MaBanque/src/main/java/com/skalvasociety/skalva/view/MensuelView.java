@@ -2,7 +2,7 @@ package com.skalvasociety.skalva.view;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -13,7 +13,7 @@ import javax.faces.event.ActionEvent;
 
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.chart.PieChartModel;
+import org.primefaces.model.chart.DonutChartModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,8 +44,8 @@ public class MensuelView implements Serializable {
 	private int categorieSelect;	
 	
 	// Pie
-	private PieChartModel pieModelDetails;
-	private PieChartModel pieModelTotal;
+	private DonutChartModel pieModelDetails;
+	private DonutChartModel pieModelTotal;
 	
 	// Champ
 	private Double total;
@@ -95,28 +95,27 @@ public class MensuelView implements Serializable {
     }  
     
     private void createPieModelDetails() {
-    	pieModelDetails = new PieChartModel();
-    	HashMap<String,Double> categorieMontant = service.getMonthCategorie(dateSelected);
+    	pieModelDetails = new DonutChartModel();
+    	LinkedHashMap<String,Number> categorieMontant = service.getMonthCategorie(dateSelected);
+    	pieModelDetails.addCircle(categorieMontant);
+    	// Calcul montant total
     	setTotal(0d);
-    	for (Entry<String, Double> categorie : categorieMontant.entrySet()) {
-    		pieModelDetails.set(categorie.getKey(), categorie.getValue());			
-    		setTotal(getTotal()+categorie.getValue());
+    	for (Entry<String, Number> categorie : categorieMontant.entrySet()) {	
+    		setTotal(getTotal()+categorie.getValue().doubleValue());
 		}
     	// Mise à jour du total mensuel
     	setTotal(Math.round( getTotal() * 100.0 ) / 100.0);
     	
     	pieModelDetails.setTitle("Repartition details dépenses");
-    	pieModelDetails.setLegendPosition("e");
+    	pieModelDetails.setLegendPosition("ne");
     }
     
     private void createPieModelTotal() {
-    	pieModelTotal = new PieChartModel();
-    	HashMap<String,Double> categorieMontant = service.getMonthTypeCategorie(dateSelected);    	
-    	for (Entry<String, Double> categorie : categorieMontant.entrySet()) {
-    		pieModelTotal.set(categorie.getKey(), categorie.getValue());		    		
-		}    	
+    	pieModelTotal = new DonutChartModel();    	
+    	LinkedHashMap<String,Number> categorieMontant = service.getMonthTypeCategorie(dateSelected);
+    	pieModelTotal.addCircle(categorieMontant);   	
     	pieModelTotal.setTitle("Repartition dépenses");
-    	pieModelTotal.setLegendPosition("e");
+    	pieModelTotal.setLegendPosition("ne");
     }  
     
 	public List<Operation> getOperations() {
@@ -151,11 +150,11 @@ public class MensuelView implements Serializable {
 		this.categorieSelect = categorieSelect;
 	}
 
-	public PieChartModel getPieModelDetails() {
+	public DonutChartModel getPieModelDetails() {
 		return pieModelDetails;
 	}
 	
-	public PieChartModel getPieModelTotal() {
+	public DonutChartModel getPieModelTotal() {
 		return pieModelTotal;
 	}
 

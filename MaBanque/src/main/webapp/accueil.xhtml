@@ -9,7 +9,24 @@
     <ui:composition template="template/template.xhtml">
     <ui:define name="title">Accueil</ui:define>
     <ui:define name="content">
-    <div>   
+    <div> 
+    <div class="ui-g">
+    	<div class="ui-g-6">
+    	<h1>Soldes</h1>
+	    	<ul>
+	    		<li><p:outputLabel id="soldeCourant" value="Courant: #{accueilView.soldeCourant} €" style="font-size: 26px;"  /></li>
+	    		<li><p:outputLabel id="soldeEpargne" value="Epargne: #{accueilView.soldeEpargne} €" style="font-size: 26px;"  /></li>
+	    	</ul>  
+    	</div>
+    	<div class="ui-g-6">
+    	<h1>12 derniers mois</h1>
+    		 <ul>
+	    		<li><p:outputLabel id="depensesAnnuel" value="Dépenses #{accueilView.depensesAnnuel} €" style="font-size: 26px;"  /></li>
+	    		<li><p:outputLabel id="recettesAnnuel" value="Recettes: #{accueilView.recettesAnnuel} €" style="font-size: 26px;"  /></li>
+	    	</ul>
+    	</div>    	
+    </div>
+    
     	<h1>Evolution mensuel</h1>
     	<p:commandButton value="Rafraichir" id="reload" update="grapheTotalLine grapheCategorie grapheEpargne" actionListener="#{accueilView.reload}" styleClass="ui-priority-primary" />    	
     	<p:chart id="grapheTotalLine" type="line" model="#{accueilView.lineTotalModel}" style="height:800px;">
@@ -28,8 +45,7 @@
 			</h:form>          
 		</h:panelGrid>
     	<p:chart id="grapheCategorie" type="line" model="#{accueilView.lineCategorieModel}" style="height:600px;"/>
-    	<h1>Evolution mensuel epargne</h1>
-    	<p:outputLabel id="soldeEpargne" value="Solde épargne: #{accueilView.soldeEpargne} €" style="font-size: 30px;"  />
+    	<h1>Evolution mensuel epargne</h1>    	
 		<p:chart id="grapheEpargne" type="line" model="#{accueilView.lineEpargneModel}" style="height:600px;"/>
     </div>
     </ui:define>
