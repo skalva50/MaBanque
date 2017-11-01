@@ -424,7 +424,11 @@ public class OperationService implements IOperationService {
 		List<Operation> listeOperations = getAllCourant();		
 		Double depenses = 0d;
 		for (Operation operation : listeOperations) {
-			if(!operation.isSens() && operation.getDateOperation().after(dateDebut) && operation.getDateOperation().before(dateFin)){
+			if(!operation.isSens() 
+					&& operation.getDateOperation().after(dateDebut) 
+					&& operation.getDateOperation().before(dateFin)
+					&& operation.getCategorie() != null
+					&& !operation.getCategorie().getHorsStats()){
 				depenses = depenses + operation.getMontant();
 			}
 		}
@@ -439,7 +443,11 @@ public class OperationService implements IOperationService {
 		List<Operation> listeOperations = getAllCourant();		
 		Double recettes = 0d;
 		for (Operation operation : listeOperations) {
-			if(operation.isSens() && operation.getDateOperation().after(dateDebut) && operation.getDateOperation().before(dateFin)){
+			if(operation.isSens() 
+					&& operation.getDateOperation().after(dateDebut) 
+					&& operation.getDateOperation().before(dateFin)
+					&& operation.getCategorie() != null
+					&& !operation.getCategorie().getHorsStats()){
 				recettes = recettes + operation.getMontant();
 			}
 		}

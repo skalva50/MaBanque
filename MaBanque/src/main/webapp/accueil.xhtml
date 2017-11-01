@@ -28,7 +28,10 @@
     </div>
     
     	<h1>Evolution mensuel</h1>
-    	<p:commandButton value="Rafraichir" id="reload" update="grapheTotalLine grapheCategorie grapheEpargne" actionListener="#{accueilView.reload}" styleClass="ui-priority-primary" />    	
+    	<p:commandButton value="Rafraichir" id="reload" 
+    		update="grapheTotalLine grapheCategorie grapheEpargne depensesAnnuel recettesAnnuel soldeCourant soldeEpargne"
+    		actionListener="#{accueilView.reload}" 
+    		styleClass="ui-priority-primary" />    	
     	<p:chart id="grapheTotalLine" type="line" model="#{accueilView.lineTotalModel}" style="height:800px;">
     		<p:ajax event="itemSelect" listener="#{accueilView.itemSelect}"/>
     	</p:chart>
